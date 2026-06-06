@@ -1,0 +1,294 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.page{padding:1.5rem 0;font-family:var(--font-sans)}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.top-title{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.top-sub{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.kpi-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.kpi-value{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.kpi-value.green{color:#1D9E75}.kpi-value.amber{color:#BA7517}.kpi-value.red{color:#E24B4A}.kpi-value.blue{color:#185FA5}
+.section-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.funnel-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:1rem}
+.stage-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px;cursor:pointer;transition:border-color .15s}
+.stage-card:hover{border-color:var(--color-border-primary)}
+.stage-card.active{border-width:1.5px}
+.stage-dot{width:8px;height:8px;border-radius:50%;margin-bottom:6px}
+.stage-name{font-size:11px;color:var(--color-text-secondary);line-height:1.3;margin-bottom:6px;min-height:28px}
+.stage-count{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.stage-amt{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.bar-track{height:4px;background:var(--color-background-secondary);border-radius:2px;margin-top:8px}
+.bar-fill{height:4px;border-radius:2px}
+.detail-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem;display:none}
+.detail-panel.open{display:block}
+.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.detail-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.close-btn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:18px;line-height:1}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.detail-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;display:flex;align-items:center;gap:8px}
+.detail-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.detail-name{font-size:12px;font-weight:500;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail-info{font-size:11px;color:var(--color-text-secondary)}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.contact-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.contact-row:last-child{border-bottom:none}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.contact-info{flex:1;min-width:0}
+.contact-name{font-size:13px;font-weight:500;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact-label{font-size:11px;color:var(--color-text-secondary)}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.badge.inv{background:#E6F1FB;color:#0C447C}.badge.amb{background:#E1F5EE;color:#0F6E56}
+.done-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)}
+.done-item:last-child{border-bottom:none}
+.done-item i{color:#1D9E75;margin-top:1px;flex-shrink:0}
+.done-tag{font-size:10px;padding:1px 6px;border-radius:8px;background:#EAF3DE;color:#3B6D11;margin-left:6px;white-space:nowrap}
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tab-btn{font-size:12px;padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer}
+.tab-btn.on{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+.chart-wrap{position:relative;height:160px;margin-top:.5rem}
+.delta-badge{font-size:11px;padding:2px 6px;border-radius:6px;font-weight:500;margin-left:6px}
+.delta-up{background:#E1F5EE;color:#0F6E56}.delta-down{background:#FCEBEB;color:#A32D2D}
+</style>
+
+<div class="page">
+<div class="top-bar">
+  <div>
+    <div class="top-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Pipeline IPO — Café Crème</div>
+    <div class="top-sub">Mise à jour · 69 contacts actifs dans le funnel</div>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary)">Export Trello v2 · Juin 2026</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">Pipeline total</div>
+    <div class="kpi-value blue">447 000 €<span class="delta-badge delta-up">+10k vs v1</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Virements reçus</div>
+    <div class="kpi-value green">30 000 €</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Attente virement</div>
+    <div class="kpi-value amber">130 000 €<span class="delta-badge delta-up">+10k</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Perdu / Bloqué</div>
+    <div class="kpi-value red">53 000 €</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Livrables réalisés</div>
+    <div class="kpi-value">20 <span style="font-size:14px;color:var(--color-text-secondary)">DONE</span></div>
+  </div>
+</div>
+
+<div class="section-title">Funnel de conversion — cliquez sur une étape pour voir les contacts</div>
+<div class="funnel-grid" id="funnel"></div>
+<div id="detailPanel" class="detail-panel">
+  <div class="detail-header">
+    <div class="detail-title" id="detailTitle"></div>
+    <button class="close-btn" onclick="closeDetail()" aria-label="Fermer"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="detail-grid" id="detailGrid"></div>
+</div>
+
+<div class="bottom-grid">
+  <div class="panel">
+    <div class="section-title" style="margin-bottom:.5rem">Priorités — Attente virement (130 000 €)</div>
+    <div id="priority-list"></div>
+  </div>
+  <div class="panel">
+    <div class="section-title" style="margin-bottom:.5rem">Livrables réalisés (DONE IPO)</div>
+    <div id="done-list"></div>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom:1rem">
+  <div class="section-title" style="margin-bottom:.75rem">Répartition financière par étape</div>
+  <div class="tabs">
+    <button class="tab-btn on" onclick="setChart('bar',this)">Barres</button>
+    <button class="tab-btn" onclick="setChart('doughnut',this)">Camembert</button>
+  </div>
+  <div class="chart-wrap"><canvas id="myChart" role="img" aria-label="Montants du pipeline IPO par étape"></canvas></div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const stages=[
+  {name:'À pitcher',count:7,amt:15000,color:'#7F77DD',contacts:[
+    {n:'HESS Valentin (Nawshine)',role:'Investisseur',amt:null},
+    {n:'Ahmed BAHRI (Nawshine)',role:'Investisseur',amt:null},
+    {n:'SALL Marie (Arame SOW)',role:'Investisseur',amt:null},
+    {n:'ACHAFAR Abdel Basset',role:'Investisseur',amt:null},
+    {n:'ECHAM Nejia',role:'Ambassadeur',amt:5000},
+    {n:'Bobo FOFANA',role:'Investisseur',amt:10000},
+    {n:'Wissam BOURBIA',role:'Investisseur',amt:null}
+  ]},
+  {name:'Intéressé',count:7,amt:44000,color:'#378ADD',contacts:[
+    {n:'Geetha (Jalila)',role:'Amb/Inv',amt:10000},
+    {n:'Hamza OULHAJ',role:'Investisseur',amt:null},
+    {n:'YOUNOUSSE Darik',role:'Investisseur',amt:4000},
+    {n:'AKIL Radouane',role:'Investisseur',amt:null},
+    {n:'ASSIA SELMET',role:'Investisseur',amt:10000},
+    {n:'Wilfried DAH',role:'Investisseur',amt:10000},
+    {n:'Ali ESSID',role:'Investisseur',amt:10000}
+  ]},
+  {name:'Accès CRM',count:7,amt:45000,color:'#1D9E75',contacts:[
+    {n:'DANSOKHO Cheickhou',role:'Ambassadeur',amt:10000},
+    {n:'AZIKI Jalila',role:'Ambassadeur',amt:5000},
+    {n:'DETROUSEL Geoffroy',role:'Ambassadeur',amt:5000},
+    {n:'SMATI Faruk',role:'Investisseur',amt:15000},
+    {n:'DOUCOURE Mamadou',role:'Investisseur',amt:5000},
+    {n:'BATCHA Youssouf',role:'Investisseur',amt:5000},
+    {n:'KONATE Aissatou',role:'-',amt:null}
+  ]},
+  {name:'Attente LOI',count:6,amt:45000,color:'#EF9F27',contacts:[
+    {n:'SABALOT Stéphane',role:'Investisseur',amt:null},
+    {n:'NAJI Abdelkarim',role:'Investisseur',amt:10000},
+    {n:'Elie DAHROUJ',role:'Investisseur',amt:10000},
+    {n:'EL FAROUAH Mohamed',role:'Investisseur',amt:5000},
+    {n:'CHENAFI Mourad',role:'Investisseur',amt:10000},
+    {n:'HABIBOU Hazar',role:'Investisseur',amt:10000}
+  ]},
+  {name:'Attente BSP',count:5,amt:45000,color:'#D85A30',contacts:[
+    {n:'Alec DEGBO',role:'Investisseur',amt:10000},
+    {n:'Najim SABRI',role:'Investisseur',amt:10000},
+    {n:'FLEURY Didier',role:'Investisseur',amt:10000},
+    {n:'CHELGHAF Mohamed',role:'Ambassadeur',amt:5000},
+    {n:'BARROS Patrick',role:'Investisseur',amt:10000}
+  ]},
+  {name:'Attente virement',count:11,amt:130000,color:'#BA7517',contacts:[
+    {n:'Antony MAROUN',role:'Investisseur',amt:10000},
+    {n:'OUMARKATAR Nafal',role:'Investisseur',amt:10000},
+    {n:'Arame SOW',role:'Ambassadeur',amt:20000},
+    {n:'LELOU Sadibou',role:'Ambassadeur',amt:5000},
+    {n:'MARDI Issam',role:'Ambassadeur',amt:15000},
+    {n:'DARDACK Mourad',role:'Ambassadeur',amt:5000},
+    {n:'MARDI Sofiane',role:'Ambassadeur',amt:10000},
+    {n:'Ayoub ZOUGARRI',role:'Ambassadeur',amt:10000},
+    {n:'BENTAYEB Jessica',role:'Ambassadeur',amt:20000},
+    {n:'CALLACHAND Nawshine',role:'Ambassadeur',amt:10000},
+    {n:'GASSAMA Mohamed',role:'Investisseur',amt:15000}
+  ]},
+  {name:'Virement reçu',count:4,amt:30000,color:'#3B6D11',contacts:[
+    {n:'BOUSSAID Sammy',role:'Ambassadeur',amt:5000},
+    {n:'ELFEKY Ahmed',role:'Investisseur',amt:10000},
+    {n:'FATIMA (pitch)',role:'Ambassadeur',amt:5000},
+    {n:'Soraya Azzaoui',role:'Investisseur',amt:10000}
+  ]},
+  {name:'KO / Perdu',count:13,amt:53000,color:'#E24B4A',contacts:[
+    {n:'HAMI Oussamah',role:'Investisseur',amt:5000},
+    {n:'SOULIMANE Redouane',role:'Ambassadeur',amt:5000},
+    {n:'Sabrina CGP Dubai',role:'Ambassadeur',amt:5000},
+    {n:'Demba Yattera',role:'Ambassadeur',amt:5000},
+    {n:'Yannick GBAYORO',role:'Investisseur',amt:2000},
+    {n:'Mohamed Chilah',role:'Ambassadeur',amt:5000},
+    {n:'Lamine Sylla',role:'Ambassadeur',amt:5000},
+    {n:'Habib Attik',role:'Ambassadeur',amt:5000},
+    {n:'BLACK NETWORK',role:'Ambassadeur',amt:null},
+    {n:'Ilyes',role:'Investisseur',amt:1000},
+    {n:'Ahmed CHINBOU',role:'Ambassadeur',amt:10000},
+    {n:'ZOUGGARI Mohamed',role:'Ambassadeur',amt:null},
+    {n:'MHOMA Mouslih',role:'Ambassadeur',amt:5000}
+  ]}
+];
+
+const funnel=document.getElementById('funnel');
+stages.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.className='stage-card';
+  d.innerHTML=`<div class="stage-dot" style="background:${s.color}"></div>
+    <div class="stage-name">${s.name}</div>
+    <div class="stage-count">${s.count}</div>
+    <div class="stage-amt">${s.amt?s.amt.toLocaleString('fr-FR')+'€':'-'}</div>
+    <div class="bar-track"><div class="bar-fill" style="background:${s.color};width:${Math.round(s.count/13*100)}%"></div></div>`;
+  d.onclick=()=>toggleDetail(i,d,s);
+  funnel.appendChild(d);
+});
+
+let activeIdx=-1;
+function toggleDetail(i,el,s){
+  document.querySelectorAll('.stage-card').forEach(c=>{c.classList.remove('active');c.style.borderColor='';});
+  if(activeIdx===i){activeIdx=-1;document.getElementById('detailPanel').classList.remove('open');return;}
+  activeIdx=i;
+  el.classList.add('active');
+  el.style.borderColor=s.color;
+  document.getElementById('detailTitle').textContent=`${s.name} · ${s.count} contacts${s.amt?' · '+s.amt.toLocaleString('fr-FR')+'€':''}`;
+  document.getElementById('detailGrid').innerHTML=s.contacts.map(c=>{
+    const init=c.n.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ ]/g,'').trim().split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const isAmb=c.role.toLowerCase().includes('amb');
+    return `<div class="detail-card">
+      <div class="detail-avatar" style="background:${s.color}22;color:${s.color}">${init}</div>
+      <div style="min-width:0">
+        <div class="detail-name">${c.n}</div>
+        <div class="detail-info">${c.role}${c.amt?' · '+c.amt.toLocaleString('fr-FR')+'€':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('detailPanel').classList.add('open');
+}
+function closeDetail(){activeIdx=-1;document.getElementById('detailPanel').classList.remove('open');document.querySelectorAll('.stage-card').forEach(c=>{c.classList.remove('active');c.style.borderColor=''});}
+
+const priority=[
+  {n:'Arame SOW',role:'Ambassadeur',amt:20000,c:'#1D9E75'},
+  {n:'BENTAYEB Jessica',role:'Ambassadeur',amt:20000,c:'#7F77DD'},
+  {n:'GASSAMA Mohamed',role:'Investisseur',amt:15000,c:'#378ADD'},
+  {n:'MARDI Issam',role:'Ambassadeur',amt:15000,c:'#EF9F27'},
+  {n:'Antony MAROUN',role:'Investisseur',amt:10000,c:'#D85A30'}
+];
+const pl=document.getElementById('priority-list');
+priority.forEach(c=>{
+  const init=c.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const isAmb=c.role.toLowerCase().includes('amb');
+  pl.innerHTML+=`<div class="contact-row">
+    <div class="avatar" style="background:${c.c}22;color:${c.c}">${init}</div>
+    <div class="contact-info">
+      <div class="contact-name">${c.n}</div>
+      <div class="contact-label"><span class="badge ${isAmb?'amb':'inv'}">${c.role}</span></div>
+    </div>
+    <div style="font-size:12px;font-weight:500;color:#BA7517;white-space:nowrap">${c.amt.toLocaleString('fr-FR')} €</div>
+  </div>`;
+});
+
+const doneItems=[
+  {t:'Data Room Fund Raising',tag:'IPO'},
+  {t:'Cadre de souscription 100% digital',tag:'Projet'},
+  {t:'CRM AIH : Cahier de recette',tag:'IT'},
+  {t:'FAQ Investisseurs – base de connaissance',tag:'IPO'},
+  {t:'Rapport encadrement juridique CRM',tag:'Juridique'},
+  {t:'Onboarding opérationnel Ambassadeur/Investisseur',tag:'Juridique'},
+  {t:'Vulgarisation pitch Ambassadeur/Investisseurs',tag:'COM'},
+  {t:'Vidéo éducative finance islamique',tag:'COM'},
+  {t:'MINDMAP process onboarding',tag:'IPO'},
+  {t:'Aide argumentaire Ambassadeur pré-IPO',tag:'IPO'}
+];
+const dl=document.getElementById('done-list');
+doneItems.forEach(d=>{
+  dl.innerHTML+=`<div class="done-item"><i class="ti ti-circle-check" aria-hidden="true"></i><span>${d.t}<span class="done-tag">${d.tag}</span></span></div>`;
+});
+
+let myChart=null;
+const chartLabels=stages.map(s=>s.name);
+const chartAmts=stages.map(s=>s.amt);
+const chartColors=stages.map(s=>s.color+'CC');
+
+function buildChart(type){
+  if(myChart)myChart.destroy();
+  const ctx=document.getElementById('myChart').getContext('2d');
+  if(type==='bar'){
+    myChart=new Chart(ctx,{type:'bar',data:{labels:chartLabels,datasets:[{label:'Montant €',data:chartAmts,backgroundColor:chartColors,borderWidth:0,borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`${v.raw.toLocaleString('fr-FR')} €`}}},
+        scales:{y:{ticks:{callback:v=>(v/1000)+'k€'},grid:{color:'rgba(128,128,128,.1)'}},x:{ticks:{font:{size:10}}}}}});
+  } else {
+    myChart=new Chart(ctx,{type:'doughnut',data:{labels:chartLabels,datasets:[{data:chartAmts,backgroundColor:chartColors,borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:12,padding:8}},
+        tooltip:{callbacks:{label:v=>`${v.label}: ${v.raw.toLocaleString('fr-FR')} €`}}}}});
+  }
+}
+buildChart('bar');
+function setChart(type,btn){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');buildChart(type);}
+</script>
